@@ -1,5 +1,5 @@
 var util = require('util'),
     request = require('request'),
-    cheerio = require('cheerio');
+    cheerio = require('cheerio'),
+    mongo = require('./mongo_control.js');
 
-console.log('works');

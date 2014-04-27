@@ -6,6 +6,7 @@
     "author": "Danandrei",
     "dependencies": {
         "request": "latest",
-        "cheerio": "latest"
+        "cheerio": "latest",
+        "mongodb": "latest"
     }
 }
