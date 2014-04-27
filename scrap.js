@@ -1,7 +1,8 @@
 var util = require('util'),
     request = require('request'),
     cheerio = require('cheerio'),
-    mongo = require('./mongo_control.js');
+    mongo = require('./mongo_control.js'),
+    ProgressBar = require('progress');
 var config = require('./config.json');
 var db;
 var currentPosition = 0;
@@ -18,8 +19,13 @@ mongo.connect('scanner', function (mongoinfo) {
 // this function is used to move trough the hosts array
 function nextHost () {
 
+    // close app
     if (currentPosition == config.hosts.length - 1){
-        //mongo.close(db);
+        console.log('Scrapper will close in 10 seconds');
+        setTimeout(function() {
+            db.close();
+            process.exit();
+        }, 10000);
         return;
     }
 
@@ -32,6 +38,10 @@ function buildFinalPagination (core_pages, functions, callback) {
     // get the html from the core pages in order to extract the page number
     var pageLength = core_pages.length;
     var pages = [];
+
+    // build progress bar
+    var bar = new ProgressBar('Building pagination... [:bar] :percent | Elapsed: :elapsed', { total: pageLength});
+
     for (var page in core_pages) {
 
         (function (page) {
@@ -42,6 +52,7 @@ function buildFinalPagination (core_pages, functions, callback) {
                     console.log(error);
                 }
 
+                bar.tick();
                 // get the page number
                 functions.getPageNumbers(html, function (number) {
 
@@ -65,7 +76,7 @@ function buildFinalPagination (core_pages, functions, callback) {
                         // TODO handler error
                     }
                 });
-            });
+            }).setMaxListeners(0);
         })(page);
     }
 }
@@ -73,6 +84,7 @@ function buildFinalPagination (core_pages, functions, callback) {
 // core function that scrapes the hosts and gets their html
 function scrapHost (host) {
     var hostFunctions = require(host.functions);
+    console.log('-------------------------------------');
     console.log('Scraping content from - ' + host.name);
 
     // Initialize core pages
@@ -88,62 +100,83 @@ function scrapHost (host) {
     buildFinalPagination (host.core_pages, hostFunctions, function (pages) {
 
         console.log('Page number complete');
-        // start the scraping for content
-        for (var page in pages) {
+        // build progress bar
+        var bar = new ProgressBar('Scraping... [:bar] :percent | Elapsed: :elapsed', { total: pages.length});
 
-            // make the request for html
-            (function (page) {
-                request(pages[page].url, function (error, response, html) {
+        // request iterator
+        var max_requests = pages.length;
+        var current_request = 0
 
-                    if (error) {
-                        // TODO handle error
-                        console.log(error);
-                    } else {
-                        console.log('Done with: ' + pages[page].url);
-                        // process the html
-                        hostFunctions.getContent(html, host.map, function (data) {
+        function nextRequest () {
 
-                            if (data) {
-                                
-                                // finalize the object
-                                data.host = host.name;
-                                data['class'] = pages[page].data['class'];
-                                data['subclass'] = pages[page].data['subclass'];
-                                data['class_id'] = pages[page].data['class_id'];
-                                data['subclass_id'] = pages[page].data['subclass_id'];
-
-                                //insert the item found
-                                var crudObj = {
-                                    data: data
-                                }
-                                mongo.insert(db, 'scan_products', crudObj);
-                                
-                                //upsert class
-                                var crudObj = {
-                                    query: {
-                                        name: data['class']
-                                    },
-                                    data: {
-                                        $set: {
-                                            name: data['class'],
-                                            class_id: data.class_id
-                                        },
-                                        $addToSet: {
-                                            subclass: data.subclass,
-                                            subclass_id: data.subclass_id
-                                        }
-                                    },
-                                    options: {
-                                        upsert: true
-                                    }
-                                }
-                                mongo.update(db, 'mappings', crudObj);
-                            }
-                        });
-                    }
-                });
-            })(page);
+            if (current_request < max_requests - 1) {
+                makeRequest(pages[++current_request]);
+                bar.tick();
+            } else {
+                if (bar.complete) {
+                    console.log('Done with - ' + host.name);
+                    nextHost();
+                }
+            }
         }
+
+        // make the request for html
+        function makeRequest (page) {
+            request(page.url, function (error, response, html) {
+
+                if (error) {
+                    // TODO handle error
+                    console.log(error);
+                } else {
+                    nextRequest();
+
+                    // process the html
+                    hostFunctions.getContent(html, host.map, function (data) {
+
+                        if (data) {
+                            
+                            // finalize the object
+                            data.host = host.name;
+                            data['class'] = page.data['class'];
+                            data['subclass'] = page.data['subclass'];
+                            data['class_id'] = page.data['class_id'];
+                            data['subclass_id'] = page.data['subclass_id'];
+
+                            //insert the item found
+                            var crudObj = {
+                                data: data
+                            }
+                            mongo.insert(db, 'scan_products', crudObj);
+                            
+                            //upsert class
+                            var crudObj = {
+                                query: {
+                                    name: data['class']
+                                },
+                                data: {
+                                    $set: {
+                                        name: data['class'],
+                                        class_id: data.class_id
+                                    },
+                                    $addToSet: {
+                                        subclass: data.subclass,
+                                        subclass_id: data.subclass_id
+                                    }
+                                },
+                                options: {
+                                    upsert: true
+                                }
+                            }
+                            mongo.update(db, 'mappings', crudObj);
+                        }
+                    });
+                }
+            });
+        };
+
+        // make the first request
+        makeRequest(pages[0]);
+        bar.tick();
     });
 }
 

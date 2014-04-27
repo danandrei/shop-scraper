@@ -62,6 +62,48 @@
                     "subclass_id": "aparate-frigorifice"
                 }
             }
+        },
+        {
+            "name": "mediadot",
+            "url": "http://www.mediadot.ro",
+            "functions": "./hosts/mediadot/functions.js",
+            "map": {
+                "video-cards": {
+                    "url": "placi-video",
+                    "class": "Computer Parts",
+                    "subclass": "Video Cards",
+                    "class_id": "computer_parts",
+                    "subclass_id": "video_cards"
+                },
+                "processors": {
+                    "url": "procesoare",
+                    "class": "Computer Parts",
+                    "subclass": "Processors",
+                    "class_id": "computer_parts",
+                    "subclass_id": "processors"
+                },
+                "phones": {
+                    "url": "telefonie/telefoane-mobile",
+                    "class": "Portables",
+                    "subclass": "Phones",
+                    "class_id": "portables",
+                    "subclass_id": "phones"
+                }
+            }
+        },
+        {
+            "name": "pcgarage",
+            "url":"http://www.pcgarage.ro",
+            "functions": "./hosts/pcgarage/functions.js",
+            "map": {
+                "video-cards": {
+                    "url": "placi-video",
+                    "class": "Computer Parts",
+                    "subclass": "Video Cards",
+                    "class_id": "computer_parts",
+                    "subclass_id": "video_cards"
+                }
+            }
         }
     ]
 }

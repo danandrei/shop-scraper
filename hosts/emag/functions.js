@@ -18,7 +18,6 @@ exports.getContent = function (html, map, callback) {
     var price = $('#pret2 .top .pret-produs-listing .price-over');
     var picture = $('form > div.poza-produs a span img');
 
-
     $(priceHolder).each(function (index, e) {
    
         if ($(e).children('span.old').text().length) {
