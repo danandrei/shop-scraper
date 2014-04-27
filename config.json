@@ -1,0 +1,109 @@
+{
+    "hosts": [
+        {
+            "name": "emag",
+            "url":"http://www.emag.ro",
+            "functions": "./hosts/emag/functions.js",
+            "map": {
+                "video-cards": {
+                    "url": "placi_video/c",
+                    "class": "Computer Parts",
+                    "subclass": "Video Cards",
+                    "class_id": "computer_parts",
+                    "subclass_id": "video_cards"
+                },
+                "tablets": {
+                    "url": "tablete/c",
+                    "class": "Portables",
+                    "subclass": "Tablets",
+                    "class_id": "portables",
+                    "subclass_id": "tablets"
+                },
+                "ssds": {
+                    "url": "solid-state_drive_ssd_/c",
+                    "class": "Computer Parts",
+                    "subclass": "SSD",
+                    "class_id": "computer_parts",
+                    "subclass_id": "ssds"
+                },
+                "tv": {
+                    "url": "televizoare/c",
+                    "class": "Electronice",
+                    "subclass": "Televizoare",
+                    "class_id": "electronice",
+                    "subclass_id": "televizoare"
+                },
+                "foto": {
+                    "url": "aparate-foto-compacte/c",
+                    "class": "Electronice",
+                    "subclass": "Aparate Foto",
+                    "class_id": "electronice",
+                    "subclass_id": "foto"
+                },
+                "video": {
+                    "url": "camere_video/c",
+                    "class": "Electronice",
+                    "subclass": "Camere Video",
+                    "class_id": "electronice",
+                    "subclass_id": "video"
+                },
+                "masini-spalat-rufe": {
+                    "url": "masini-spalat-rufe/c",
+                    "class": "Electrocasnice",
+                    "subclass": "Masini de spalat rufe",
+                    "class_id": "electrocasnice",
+                    "subclass_id": "masini-spalat-rufe"
+                },
+                "aparate-frigorifice": {
+                    "url": "aparate-frigorifice/c",
+                    "class": "Electrocasnice",
+                    "subclass": "Aparate frigorifice",
+                    "class_id": "electrocasnice",
+                    "subclass_id": "aparate-frigorifice"
+                }
+            }
+        },
+        {
+            "name": "mediadot",
+            "url": "http://www.mediadot.ro",
+            "functions": "./hosts/mediadot/functions.js",
+            "map": {
+                "video-cards": {
+                    "url": "placi-video",
+                    "class": "Computer Parts",
+                    "subclass": "Video Cards",
+                    "class_id": "computer_parts",
+                    "subclass_id": "video_cards"
+                },
+                "processors": {
+                    "url": "procesoare",
+                    "class": "Computer Parts",
+                    "subclass": "Processors",
+                    "class_id": "computer_parts",
+                    "subclass_id": "processors"
+                },
+                "phones": {
+                    "url": "telefonie/telefoane-mobile",
+                    "class": "Portables",
+                    "subclass": "Phones",
+                    "class_id": "portables",
+                    "subclass_id": "phones"
+                }
+            }
+        },
+        {
+            "name": "pcgarage",
+            "url":"http://www.pcgarage.ro",
+            "functions": "./hosts/pcgarage/functions.js",
+            "map": {
+                "video-cards": {
+                    "url": "placi-video",
+                    "class": "Computer Parts",
+                    "subclass": "Video Cards",
+                    "class_id": "computer_parts",
+                    "subclass_id": "video_cards"
+                }
+            }
+        }
+    ]
+}
