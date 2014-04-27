@@ -1,7 +1,7 @@
 {
     "hosts": [
         {
-            "name": "emag",
+            "name": "emag.ro",
             "url":"http://www.emag.ro",
             "functions": "./hosts/emag/functions.js",
             "map": {
@@ -64,7 +64,7 @@
             }
         },
         {
-            "name": "mediadot",
+            "name": "mediadot.ro",
             "url": "http://www.mediadot.ro",
             "functions": "./hosts/mediadot/functions.js",
             "map": {
@@ -92,7 +92,7 @@
             }
         },
         {
-            "name": "pcgarage",
+            "name": "pcgarage.ro",
             "url":"http://www.pcgarage.ro",
             "functions": "./hosts/pcgarage/functions.js",
             "map": {
