@@ -1,0 +1,11 @@
+{
+    "name": "shop-scraper",
+    "version": "0.0.1",
+    "description": "Scrape shops",
+    "main": "scrap.js",
+    "author": "Danandrei",
+    "dependencies": {
+        "request": "latest",
+        "cheerio": "latest"
+    }
+}
