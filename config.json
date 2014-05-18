@@ -1,4 +1,7 @@
 {
+    "options": {
+        "scrapHour": "20:55"
+    },
     "hosts": [
         {
             "name": "emag.ro",
