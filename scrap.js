@@ -12,6 +12,9 @@ var ACTIVE_DATE;
 // connect to mongo
 mongo.connect('scanner', function (mongoinfo) {
     db = mongoinfo;
+
+    // this is temporary until w do the merging thingy
+    mongo.dropDatabase(db);
 });
 
 // this function is used to move trough the hosts array
@@ -22,8 +25,6 @@ function nextHost () {
         console.log('------ FINISHED RUN ------');
         /* scrapper has finished  */
 
-        // TODO this is only temporary until we figure out what to do with the old items when a new scan is called
-        mongo.dropDatabase(db);
         return;
     }
 
@@ -40,40 +41,68 @@ function buildFinalPagination (core_pages, functions, callback) {
     // build progress bar
     var bar = new ProgressBar('Building pagination... [:bar] :percent | Elapsed: :elapsed', { total: pageLength});
 
+    // check if all requsets have been proceed
+    function checkEnd () {
+
+        // send pages if nothing left to be done
+        if (!--pageLength) {
+            callback(pages);
+            return;
+        }
+    }
+
     for (var page in core_pages) {
 
         (function (page) {
             request(core_pages[page].url, function (error, response, html) {
 
-                if (error) {
+                // tick the progressbar
+                bar.tick();
+
+                // handle error
+                if (error || !html) {
                     // TODO handle error
                     console.log(error);
+
+                    // scraper must keep going
+                    checkEnd();
+                } else {
+
+                    // get the page number
+                    functions.getPageNumbers(html, function (number) {
+
+                        // handle error
+                        if (!number){
+                            // TODO handler error
+
+                            // scraper must keep going
+                            checkEnd();
+
+                        } else {
+                            //build the final pages
+                            functions.buildPagination(number, core_pages[page].url, function (err, partialPagination) {
+
+                                // handle eror
+                                if (err || !partialPagination.length) {
+                                    // TODO handle error
+
+                                    // scraper must keep going
+                                    checkEnd(); 
+                                } else {
+                                    for (var i in partialPagination) {
+                                        pages.push({
+                                            url: partialPagination[i],
+                                            data: core_pages[page].data
+                                        });
+                                    }
+
+                                    // when done send pages
+                                    checkEnd(); 
+                                }   
+                            });
+                        }
+                    });
                 }
-
-                bar.tick();
-                // get the page number
-                functions.getPageNumbers(html, function (number) {
-
-                    if (number) {
-                        //build the final pages
-                        functions.buildPagination(number, core_pages[page].url, function (partialPagination) {
-
-                            for (var i in partialPagination) {
-                                pages.push({
-                                    url: partialPagination[i],
-                                    data: core_pages[page].data
-                                });
-                            }
-
-                            // when done send pages
-                            if (!--pageLength) {
-                                callback(pages);
-                            }
-                        });
-                    } else {
-                        // TODO handler error
-                    }
-                });
             }).setMaxListeners(0);
         })(page);
     }
@@ -94,8 +123,25 @@ function scrapHost (host) {
         });
     }
 
+    // check the core_pages
+    if (!host.core_pages.length) {
+        // TODO error handle
+
+        // keep the scraper going
+        nextHost();
+        return;
+    }
+
     // build the url for the pages that are going to be scraped
     buildFinalPagination (host.core_pages, hostFunctions, function (pages) {
+
+        // check if the pages exist
+        if (!pages.length) {
+            // TODO handle error;
+
+            nextHost();
+            return;
+        }
 
         console.log('Page number complete');
         // build progress bar
@@ -125,6 +171,9 @@ function scrapHost (host) {
                 if (error) {
                     // TODO handle error
                     console.log(error);
+
+                    // keep the scraper going
+                    nextRequest();
                 } else {
                     nextRequest();
 
@@ -132,6 +181,8 @@ function scrapHost (host) {
                     hostFunctions.getContent(html, host.map, function (data) {
 
                         if (data) {
+
+                            // TODO check the object for corrupt data
                             
                             // finalize the object
                             data.host = host.name;
@@ -166,6 +217,8 @@ function scrapHost (host) {
                                 }
                             }
                             mongo.update(db, 'mappings', crudObj);
+                        } else {
+                            // no data received error
                         }
                     });
                 }
@@ -183,7 +236,7 @@ function scrapHost (host) {
 function cronJob (oldDate) {
     
     // oldDate + 1 day
-    var date = new Date(oldDate.getTime() + (24 * 60 * 60 * 1000);
+    var date = new Date(oldDate.getTime() + (24 * 60 * 60 * 1000));
 
     var job = schedule.scheduleJob(date, function(){
         console.log('------ ' + date + ' ------');

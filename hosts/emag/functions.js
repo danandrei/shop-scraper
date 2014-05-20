@@ -18,6 +18,11 @@ exports.getContent = function (html, map, callback) {
     var price = $('#pret2 .top .pret-produs-listing .price-over');
     var picture = $('form > div.poza-produs a span img');
 
+    if (!priceHolder.length) {
+        callback(null);
+        return;
+    }
+
     $(priceHolder).each(function (index, e) {
    
         if ($(e).children('span.old').text().length) {
@@ -50,6 +55,12 @@ exports.getContent = function (html, map, callback) {
 //builds the pagination
 exports.buildPagination = function (number, page, callback) {
 
+    // handle bad input
+    if (!number || !page || typeof page !== 'string') {
+        callback('bad input', null);
+        return;
+    }
+
     // get the root of the page url
     page = page.substring(0, page.length - 2);
 
@@ -62,7 +73,7 @@ exports.buildPagination = function (number, page, callback) {
         pagination.push(page + '/p' + i + '/c');
     }
 
-    callback(pagination);
+    callback(null, pagination);
 }
 
 //gets the number of pages of an item

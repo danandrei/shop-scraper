@@ -33,6 +33,11 @@ exports.getContent = function (html, map, callback) {
     var priceContainer = $('div.product-box .pb-price-container .pb-price');
     var picture = $('div.product-box .pb-image a img');
 
+    if (!boxSpecs.length) {
+        callback(null);
+        return;
+    }
+
     $(boxSpecs).each(function (index, e) {
         var extra = $(boxSpecs[index]).children('.pb-extra').text();
         if (extra.indexOf('Discount') > -1) {
@@ -64,6 +69,11 @@ exports.getContent = function (html, map, callback) {
 //builds the pagination
 exports.buildPagination = function (number, page, callback) {
 
+    // handle bad input
+    if (!number || !page || typeof page !== 'string') {
+        callback('bad input', null);
+    }
+
     // init pagination
     var pagination = [];
 
@@ -72,7 +82,7 @@ exports.buildPagination = function (number, page, callback) {
         pagination.push(page + '/pagina' + i);
     }
 
-    callback(pagination);
+    callback(null, pagination);
 }
 
 //gets the number of pages of an item
@@ -96,6 +106,4 @@ exports.getPageNumbers = function (html, callback) {
             }
         }
     }
-
-    callback(1);
 }

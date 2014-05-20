@@ -32,6 +32,11 @@ exports.getContent = function (html, map, callback) {
     var price = $('.product_box div.price');
     var picture = $('div.product_box div.image img');
 
+    if (!price.length) {
+        callback(null);
+        return;
+    }
+
     $(price).each(function (index, e) {
         var priceInside = $(e).text();
         if (priceInside.indexOf('vechi') >= 0) {
@@ -64,6 +69,11 @@ exports.getContent = function (html, map, callback) {
 //builds the pagination
 exports.buildPagination = function (number, page, callback) {
 
+    // handle bad input
+    if (!number || !page || typeof page !== 'string') {
+        callback('bad input', null);
+    }
+
     // init pagination
     var pagination = [];
 
@@ -72,7 +82,7 @@ exports.buildPagination = function (number, page, callback) {
         pagination.push(page + '/pagina' + i);
     }
 
-    callback(pagination);
+    callback(null, pagination);
 }
 
 //gets the number of pages of an item
