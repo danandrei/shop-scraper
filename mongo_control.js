@@ -11,10 +11,11 @@ exports.connect = function (db, callback) {
 
     });
 }
-exports.insert = function (db, collection_name, obj) {
+exports.insert = function (db, collection_name, obj, callback) {
     
     //if not object throw err
-    if (typeof obj.data !== 'object') { console.error('data not an object'); return; }
+    if (typeof obj.data !== 'object') { callback('data not an object'); return; }
+    if (!db) { callback('no DB'); return; }
 
     //get the collection
     var collection = db.collection(collection_name);
@@ -22,7 +23,10 @@ exports.insert = function (db, collection_name, obj) {
     //insert the data
     collection.insert(obj.data, function (err, docs) {
         
-        if (err) throw err;
+        if (err) callback(err);
+
+        // insert complete
+        callback (null);
     });
 }
 
@@ -34,9 +38,10 @@ exports.dropDatabase = function (db) {
     });
 }
 
-exports.update = function (db, collection_name, obj) {
+exports.update = function (db, collection_name, obj, callback) {
 
-    if (!obj) { console.error('no DATA!'); return; }
+    if (!obj) { callback('no DATA!'); return; }
+    if (!db) { callback('no DB'); return; }
 
     //get the collection
     var collection = db.collection(collection_name);
@@ -44,7 +49,10 @@ exports.update = function (db, collection_name, obj) {
     //update the data
     collection.update(obj.query, obj.data, obj.options, function (err, docs) {
 
-        if (err) throw err;
+        if (err) callback(err);
+
+        // update complete
+        callback (null);
     });
 }
 
