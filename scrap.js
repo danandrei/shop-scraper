@@ -9,6 +9,8 @@ var db;
 var currentPosition = 0;
 var ACTIVE_DATE;
 
+var ACTIVE_COL = '';
+
 var itemsFound = {};
 
 // log API init
@@ -48,9 +50,6 @@ var log = {
 // connect to mongo
 mongo.connect('scanner', function (mongoinfo) {
     db = mongoinfo;
-
-    // this is temporary until w do the merging thingy
-    mongo.dropDatabase(db);
 
     // start the cron job
     cronJob(new Date(scrapHour - (24 * 60 * 60 * 1000)));
@@ -382,7 +381,7 @@ function scrapHost (host) {
                             }
                             itemsFound[host.name] ++;
 
-                            mongo.insert(db, 'scan_products', crudObj, function (err) {
+                            mongo.insert(db, 'scan_products_' + ACTIVE_COL, crudObj, function (err) {
 
                                 // handle error
                                 if (err) {
@@ -418,7 +417,7 @@ function scrapHost (host) {
                                         upsert: true
                                     }
                                 }
-                                mongo.update(db, 'mappings', crudObj, function (err) {
+                                mongo.update(db, 'mappings_' + ACTIVE_COL, crudObj, function (err) {
 
                                     if (err) {
                                         var errObj = {
@@ -477,6 +476,38 @@ function cronJob (oldDate) {
         buildLog(logObj);
 
         // start the scrap
+        ACTIVE_COL = ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+
+        // drop the col if it already exists
+        mongo.removeCol(db, 'scan_products_' + ACTIVE_COL, function (err) {
+
+            //handle error
+            if (err) {
+                var errObj = {
+                    err: 'err',
+                    url: '~all~',
+                    host: '~all~',
+                    date: new Date()
+                }
+                // build the error log
+                buildError(errObj);
+            }
+        });
+        mongo.removeCol(db, 'mappings_' + ACTIVE_COL, function (err) {
+
+            //handle error
+            if (err) {
+                var errObj = {
+                    err: 'err',
+                    url: '~all~',
+                    host: '~all~',
+                    date: new Date()
+                }
+                // build the error log
+                buildError(errObj);
+            }
+        });
+
         ACTIVE_DATE = date;
         currentPosition = 0;
         scrapHost(config.hosts[0]);

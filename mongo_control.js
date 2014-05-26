@@ -56,6 +56,20 @@ exports.update = function (db, collection_name, obj, callback) {
     });
 }
 
+exports.removeCol = function (db, collection_name, callback) {
+
+    if (!db || !collection_name) { return; }
+
+    // get the collection
+    var collection = db.collection(collection_name);
+
+    // remove the collection
+    collection.remove(function (err) {
+
+        if (err) { callback(err); return; }
+    });
+}
+
 exports.close = function (db) {
     
     //close the connection
