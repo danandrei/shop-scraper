@@ -36,11 +36,20 @@ var log = {
                 log: 'scraper'
             };
 
-            var insertObj = {
-                data: data
+            var updateObj = {
+                data: {
+                   $set: data
+                },
+                query: {
+                    filename: this.filename
+                },
+                options: {
+                    upsert: true
+                }
             }
 
-            mongo.insert(db, 'logs', insertObj, function (err) {
+            // prevent log duplicates
+            mongo.update(db, 'logs', updateObj, function (err) {
 
                 // handle error
                 if (err) {
@@ -106,7 +115,7 @@ function buildError (errObj) {
     var logLine = '| ' + formatDate(errObj.date) + ' |[ERROR] - ';
     logLine += errObj.err + ' - ';
     logLine += '| on url: ' + errObj.url + ' | - ';
-    logLine += '| on host: ' + errObj.host + ' |<br>\n';
+    logLine += '| on host: ' + errObj.host + ' | § \n';
 
     console.log(logLine);
     log.write(logLine);
@@ -126,7 +135,7 @@ function buildLog (logObj) {
 
     var logLine = '| ' + formatDate(logObj.date) + ' |[LOG] - ';
     logLine += logObj.log + ' - ';
-    logLine += '| on host: ' + logObj.host + ' |<br>\n';
+    logLine += '| on host: ' + logObj.host + ' | § \n';
 
     console.log(logLine);
     log.write(logLine);
