@@ -26,8 +26,34 @@ var log = {
 
         // create file if it does not exist
         if (this.file == null || this.activeFile !== this.filename) {
-            this.file = fs.openSync(this.filename, this.flag, this.mode);
+            this.file = fs.openSync('logs/' + this.filename, this.flag, this.mode);
             this.activeFile = this.filename;
+
+            // insert the log in mongo
+            var data = {
+                filename: this.filename,
+                location: 'apps/shop-scraper/logs/' + this.filename,
+                log: 'scraper'
+            };
+
+            var insertObj = {
+                data: data
+            }
+
+            mongo.insert(db, 'logs', insertObj, function (err) {
+
+                // handle error
+                if (err) {
+                    var errObj = {
+                        err: err,
+                        url: 'log file creation',
+                        host: '',
+                        date: new Date()
+                    }      
+                    // build the error log
+                    buildError(errObj);
+                }
+            });
         }
 
         if (string instanceof String) { string = string.toString(); }
@@ -80,7 +106,7 @@ function buildError (errObj) {
     var logLine = '| ' + formatDate(errObj.date) + ' |[ERROR] - ';
     logLine += errObj.err + ' - ';
     logLine += '| on url: ' + errObj.url + ' | - ';
-    logLine += '| on host: ' + errObj.host + ' |\n';
+    logLine += '| on host: ' + errObj.host + ' |<br>\n';
 
     console.log(logLine);
     log.write(logLine);
@@ -100,7 +126,7 @@ function buildLog (logObj) {
 
     var logLine = '| ' + formatDate(logObj.date) + ' |[LOG] - ';
     logLine += logObj.log + ' - ';
-    logLine += '| on host: ' + logObj.host + ' |\n';
+    logLine += '| on host: ' + logObj.host + ' |<br>\n';
 
     console.log(logLine);
     log.write(logLine);
@@ -464,7 +490,7 @@ function cronJob (oldDate) {
     var job = schedule.scheduleJob(date, function(){
 
         // init the log file
-        log.filename = 'logs/scrap_log_' + formatDate(date) + '.txt';
+        log.filename = 'scrap_log_' + formatDate(date) + '.txt';
 
         // create log
         var logObj = {
