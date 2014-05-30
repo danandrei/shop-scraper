@@ -115,7 +115,7 @@ function buildError (errObj) {
     var logLine = '| ' + formatDate(errObj.date) + ' |[ERROR] - ';
     logLine += errObj.err + ' - ';
     logLine += '| on url: ' + errObj.url + ' | - ';
-    logLine += '| on host: ' + errObj.host + ' | § \n';
+    logLine += '| on host: ' + errObj.host + ' | § ';
 
     console.log(logLine);
     log.write(logLine);
@@ -135,7 +135,7 @@ function buildLog (logObj) {
 
     var logLine = '| ' + formatDate(logObj.date) + ' |[LOG] - ';
     logLine += logObj.log + ' - ';
-    logLine += '| on host: ' + logObj.host + ' | § \n';
+    logLine += '| on host: ' + logObj.host + ' | § ';
 
     console.log(logLine);
     log.write(logLine);
@@ -492,7 +492,7 @@ function scrapHost (host) {
 /****** CRON Job Core ******/
 
 function cronJob (oldDate) {
-    
+
     // oldDate + 1 day
     var date = new Date(oldDate.getTime() + (24 * 60 * 60 * 1000));
 
@@ -559,5 +559,6 @@ var dateObj = {
     month: currentDate.getUTCMonth(),
     day: currentDate.getUTCDate()
 }
+
 var setHour = config.options.scrapHour.split(':');
-var scrapHour = new Date(dateObj.year, dateObj.month, dateObj.day, setHour[0], setHour[1], 0);
+var scrapHour = new Date(dateObj.year, dateObj.month, dateObj.day + 1, setHour[0], setHour[1], 0);
