@@ -26,7 +26,7 @@ var log = {
 
         // create file if it does not exist
         if (this.file == null || this.activeFile !== this.filename) {
-            this.file = fs.openSync('logs/' + this.filename, this.flag, this.mode);
+            this.file = fs.openSync('apps/shop-scraper/logs/' + this.filename, this.flag, this.mode);
             this.activeFile = this.filename;
 
             // insert the log in mongo
