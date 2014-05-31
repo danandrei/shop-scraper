@@ -82,13 +82,18 @@ var log = {
     }
 }
 
+// START SCRAP
 // connect to mongo
 mongo.connect('scanner', function (mongoinfo) {
     db = mongoinfo;
 
+    // initialize the date
+    var currentDate = new Date();
+    var setHour = config.options.scrapHour.split(':');
+    var scrapHour = currentDate.setHours(setHour[0], setHour[1], 0);
+
     // start the cron job
     cronJob(new Date(scrapHour - (24 * 60 * 60 * 1000)));
-
 });
 
 function formatDate (date) {
@@ -115,7 +120,7 @@ function buildError (errObj) {
     var logLine = '| ' + formatDate(errObj.date) + ' |[ERROR] - ';
     logLine += errObj.err + ' - ';
     logLine += '| on url: ' + errObj.url + ' | - ';
-    logLine += '| on host: ' + errObj.host + ' | § ';
+    logLine += '| on host: ' + errObj.host + ' |§';
 
     console.log(logLine);
     log.write(logLine);
@@ -135,7 +140,7 @@ function buildLog (logObj) {
 
     var logLine = '| ' + formatDate(logObj.date) + ' |[LOG] - ';
     logLine += logObj.log + ' - ';
-    logLine += '| on host: ' + logObj.host + ' | § ';
+    logLine += '| on host: ' + logObj.host + ' |§';
 
     console.log(logLine);
     log.write(logLine);
@@ -492,7 +497,7 @@ function scrapHost (host) {
 /****** CRON Job Core ******/
 
 function cronJob (oldDate) {
-
+    console.log(oldDate);
     // oldDate + 1 day
     var date = new Date(oldDate.getTime() + (24 * 60 * 60 * 1000));
 
@@ -551,14 +556,3 @@ function cronJob (oldDate) {
         cronJob(date);
     });
 }
-
-// initialize the date
-var currentDate = new Date();
-var dateObj = {
-    year: currentDate.getUTCFullYear(),
-    month: currentDate.getUTCMonth(),
-    day: currentDate.getUTCDate()
-}
-
-var setHour = config.options.scrapHour.split(':');
-var scrapHour = new Date(dateObj.year, dateObj.month, dateObj.day + 1, setHour[0], setHour[1], 0);
