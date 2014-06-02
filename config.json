@@ -10,21 +10,21 @@
             "map": {
                 "video-cards": {
                     "url": "placi_video/c",
-                    "class": "Computer Parts",
-                    "subclass": "Video Cards",
+                    "class": "Componente PC",
+                    "subclass": "Placi Video",
                     "class_id": "computer_parts",
                     "subclass_id": "video_cards"
                 },
                 "tablets": {
                     "url": "tablete/c",
-                    "class": "Portables",
-                    "subclass": "Tablets",
+                    "class": "Portabile",
+                    "subclass": "Tablete",
                     "class_id": "portables",
                     "subclass_id": "tablets"
                 },
                 "ssds": {
                     "url": "solid-state_drive_ssd_/c",
-                    "class": "Computer Parts",
+                    "class": "Componente PC",
                     "subclass": "SSD",
                     "class_id": "computer_parts",
                     "subclass_id": "ssds"
@@ -63,6 +63,13 @@
                     "subclass": "Aparate frigorifice",
                     "class_id": "electrocasnice",
                     "subclass_id": "aparate-frigorifice"
+                },
+                "pc_games": {
+                    "url": "jocuri-pc/c",
+                    "class": "Gaming",
+                    "subclass": "Jocuri PC",
+                    "class_id": "gaming",
+                    "subclass_id": "pc_games"
                 }
             }
         },
@@ -73,22 +80,22 @@
             "map": {
                 "video-cards": {
                     "url": "placi-video",
-                    "class": "Computer Parts",
-                    "subclass": "Video Cards",
+                    "class": "Componente PC",
+                    "subclass": "Placi Video",
                     "class_id": "computer_parts",
                     "subclass_id": "video_cards"
                 },
                 "processors": {
                     "url": "procesoare",
-                    "class": "Computer Parts",
-                    "subclass": "Processors",
+                    "class": "Componente PC",
+                    "subclass": "Procesoare",
                     "class_id": "computer_parts",
                     "subclass_id": "processors"
                 },
                 "phones": {
                     "url": "telefonie/telefoane-mobile",
-                    "class": "Portables",
-                    "subclass": "Phones",
+                    "class": "Portabile",
+                    "subclass": "Telefoane",
                     "class_id": "portables",
                     "subclass_id": "phones"
                 }
@@ -101,10 +108,17 @@
             "map": {
                 "video-cards": {
                     "url": "placi-video",
-                    "class": "Computer Parts",
-                    "subclass": "Video Cards",
+                    "class": "Componente PC",
+                    "subclass": "Placi Video",
                     "class_id": "computer_parts",
                     "subclass_id": "video_cards"
+                },
+                "antivirus": {
+                    "url": "securitate",
+                    "class": "Software",
+                    "subclass": "Antivirusi",
+                    "class_id": "software",
+                    "subclass_id": "antivirus"
                 }
             }
         }
