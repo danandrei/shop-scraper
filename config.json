@@ -1,6 +1,6 @@
 {
     "options": {
-        "scrapHour": "1:50"
+        "scrapHour": "00:00"
     },
     "hosts": [
         {

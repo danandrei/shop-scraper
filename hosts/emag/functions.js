@@ -83,9 +83,9 @@ exports.getPageNumbers = function (html, callback) {
     var $ = cheerio.load(html);
 
     // finally, get the number of pages from the html
-    var pageNumber = $('div.holder-pagini-2 span.pagini-2').text();
+    var nbr = $('.listing-pagination .left-part').text();
     var numberSplits = pageNumber.split(' ');
-    var number = numberSplits[numberSplits.length - 1].substring(0, numberSplits[numberSplits.length - 1].length - 1);
+    var number = numberSplits[3];
 
     // send back the number found
     callback(parseInt(number));
