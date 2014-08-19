@@ -84,7 +84,7 @@ exports.getPageNumbers = function (html, callback) {
 
     // finally, get the number of pages from the html
     var nbr = $('.listing-pagination .left-part').text();
-    var numberSplits = pageNumber.split(' ');
+    var numberSplits = nbr.split(' ');
     var number = numberSplits[3];
 
     // send back the number found
